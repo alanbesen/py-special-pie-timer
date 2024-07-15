@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BLE Device Selection</title>
+</head>
+<body>
+    <h1>BLE Device Selection</h1>
+
+    <form action="/start_notifications" method="post">
+        <label for="device">Select a BLE Device:</label>
+        <select id="device" name="device">
+            {% for device in devices %}
+                <option value="{{ device.address }}">{{ device.name }} - {{ device.address }}</option>
+            {% endfor %}
+        </select>
+        <br><br>
+        <input type="submit" value="Start Notifications">
+    </form>
+
+    <ul id="results">
+        <!-- Aqui serão inseridos dinamicamente os resultados via JavaScript/jQuery -->
+    </ul>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            // Função para atualizar os resultados na página
+            function updateResults() {
+                $.ajax({
+                    url: '/update_results',  // Endpoint Flask que retorna os resultados
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        // Limpa a lista de resultados existente
+                        $('#results').empty();
+                        
+                        // Itera sobre os dados recebidos e adiciona à lista
+                        data.forEach(function(item) {
+                            if (item.shot === 1) {
+                                // Se for o primeiro shot, exibir com split 0
+                                $('#results').append('<li>SHOT: ' + item.shot + ' - TIME: ' + item.time + ' | SPLIT: 0</li>');
+                            } else {
+                                // Caso contrário, exibir com a diferença de tempo
+                                $('#results').append('<li>SHOT: ' + item.shot + ' - TIME: ' + item.time + ' | SPLIT: ' + item.delta_time + '</li>');
+                            }
+                        });
+                    },
+                    error: function(error) {
+                        console.log('Erro ao buscar resultados:', error);
+                    }
+                });
+            }
+        
+            // Função para enviar o comando "start" via AJAX
+            $('#startButton').click(function() {
+                $.ajax({
+                    url: '/start_notifications',
+                    type: 'POST',
+                    data: { device: $('#deviceSelect').val() },
+                    success: function(response) {
+                        console.log('Iniciado:', response);
+                        // Atualiza os resultados após iniciar
+                        updateResults();
+                    },
+                    error: function(error) {
+                        console.log('Erro ao iniciar:', error);
+                    }
+                });
+            });
+        
+            // Função para enviar o comando "stop" via AJAX
+            $('#stopButton').click(function() {
+                $.ajax({
+                    url: '/stop_notifications',
+                    type: 'POST',
+                    success: function(response) {
+                        console.log('Parado:', response);
+                        // Limpa os resultados ao parar
+                        $('#results').empty();
+                    },
+                    error: function(error) {
+                        console.log('Erro ao parar:', error);
+                    }
+                });
+            });
+        
+            // Chama a função de atualização a cada 5 segundos (ou o intervalo desejado)
+            setInterval(updateResults, 100);  // Atualiza a cada 5 segundos
+        });
+        </script>
+        
+
+
+</body>
+</html>

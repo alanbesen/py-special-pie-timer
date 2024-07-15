@@ -1,4 +1,4 @@
-### Read from special pie shot timer 
+### Read from special pie SP M1A2 shot  timer  
 
 python 3.11 
 
@@ -16,3 +16,5 @@ stop
 ```
 
 The next step, i will create a app that show this results on a webpage or, to a LCD display
+
+This code uses BLE from SP M1A2 and read results. 

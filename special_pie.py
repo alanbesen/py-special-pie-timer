@@ -2,7 +2,7 @@ import asyncio
 from bleak import BleakClient
 
 address = "54:14:A7:77:02:A2"  # Substitua pelo endereço do seu dispositivo
-characteristic_uuid = "0000fff1-0000-1000-8000-00805f9b34fb"  # Substitua pelo UUID da característica de notificação
+characteristic_uuid = "0000fff1-0000-1000-8000-00805f9b34fb" 
 
 previous_time_seconds = None
 previous_time_ms = None
@@ -18,7 +18,7 @@ async def connect_and_subscribe(address):
             await client.start_notify(characteristic_uuid, notification_handler)
             print(f"Inscrição para notificações ativada na característica: {characteristic_uuid}")
             
-            # Mantém o loop para receber notificações (opcional, dependendo da sua aplicação)
+            
             while True:
                 await asyncio.sleep(1)  # Espera um pouco para receber notificações
 
@@ -58,7 +58,7 @@ def interpret_hex_data(hex_data):
                 int_value = int(parts[i], 16)
                 interpreted_string += f"Desconhecido convertido para int: {int_value} | "
             except ValueError:
-                pass  # Não é um valor numérico válido
+                pass  
             
     return interpreted_string
 
@@ -126,4 +126,3 @@ async def notification_handler(sender, data):
 # Loop principal para execução do código assíncrono
 loop = asyncio.get_event_loop()
 loop.run_until_complete(connect_and_subscribe(address))
-2

@@ -1,4 +1,6 @@
-read from special pie shot timer 
+### Read from special pie shot timer 
+
+python 3.11 
 
 Simple output 
 ```
